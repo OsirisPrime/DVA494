@@ -15,8 +15,8 @@ architecture Mux2to1_arch of Mux2to1 is
     signal T2 : std_logic;
     begin
         T1 <= s0 and i1;
-        T2 <= i0 and (not s0);
-        out0 <= T1 and T2;
+        T2 <= i0 and not s0;
+        out0 <= T1 or T2;
 end architecture;
 
 
