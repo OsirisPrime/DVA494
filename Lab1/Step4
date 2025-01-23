@@ -1,0 +1,39 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity Mux2to1 is
+    port(
+        i0      : in std_logic;
+        i1      : in std_logic;
+        s0      : in std_logic;
+        out0    : out std_logic
+        );
+end;
+
+architecture Mux2to1_arch of Mux2to1 is
+    signal T1, T2 : std_logic;
+    begin
+
+    end architecture;
+
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity Mux4To1Inst is
+    port(
+        i0      : in std_logic;
+        i1      : in std_logic;
+        i2      : in std_logic;
+        i3      : in std_logic;
+        s0      : in std_logic;
+        s1      : in std_logic;
+        out0    : out std_logic
+        );
+end;
+
+architecture Mux2to1_arch of Mux2to1 is
+    signal T1, T2 : std_logic;
+    begin
+
+    end architecture;
