@@ -129,10 +129,11 @@ architecture double_mux_arch of double_mux is
     end architecture;
     
  
+-- Testbench to verify double_mux entity 
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity test_double_mux is end;
+entity test_double_mux is end;  -- Empty testbench entity
 
 architecture test_arch of test_double_mux is
     component double_mux is
