@@ -35,7 +35,7 @@ architecture test_arch of test_Mux2To1 is
         out0    : out std_logic
         );
     end component;
-    signal i0, i1, s0, out0 : std_logic;    -- SIgnals to connect to the inputs and output
+    signal i0, i1, s0, out0 : std_logic;    -- Signals to connect to the inputs and output
     begin
         test_instance : Mux2To1 port map(i0, i1, s0, out0); -- Map the signals to the connections
         process is          -- Test with 8 states
