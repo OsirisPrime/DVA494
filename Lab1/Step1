@@ -39,7 +39,7 @@ architecture tb_arch of tb is
 begin
     entity_instance_1 : hello_and
         port map(in1, in2, result); -- Map the signal to the AND gate connections
-    process is                      -- Test with four state
+    process is                      -- Test with four states
     begin
         in1 <= '0';
         in2 <= '0';
