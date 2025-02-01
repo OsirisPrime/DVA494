@@ -1,0 +1,6 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/kimsv/OneDrive - Mlardalens universitet/Workspace/VivsdoProjects/DVA494_Lab1.5/DVA494_Lab1.5.srcs/sources_1/new/Step5.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'Mux0'
+INFO: [VRFC 10-3107] analyzing entity 'Mux2To1'
+INFO: [VRFC 10-3107] analyzing entity 'Mux1'
+INFO: [VRFC 10-3107] analyzing entity 'double_mux'
+INFO: [VRFC 10-3107] analyzing entity 'test_double_mux'
