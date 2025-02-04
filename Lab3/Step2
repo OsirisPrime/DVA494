@@ -132,7 +132,13 @@ begin
          wait for 10ps;
          
          Seed_in <= '1';
-         wait for 70 ps;
+         wait for 10 ps;
+         
+         Seed_in <= '0';
+         wait for 20 ps;
+         
+         Seed_in <= '1';
+         wait for 40 ps;
 
          Seed_en <= '0';   
          Seed_in <= '0';
