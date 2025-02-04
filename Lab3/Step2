@@ -76,13 +76,14 @@ architecture LFSR_Arch of LFSR is
     signal mux_out, feedback : std_logic;
     
 begin
+        Mux_inst : Mux2To1 port map(i0 => feedback, i1 => seed_in, s0 => seed_en, out0 => mux_out);
         feedback <= shift_reg(0) xor shift_reg(1);
-        Mux_inst : Mux2To1 port map(s0 => seed_en, i0 => feedback, i1 => seed_in, out0 => mux_out);
         
-        process(Clk)
+        process(Clk) is
         begin
             if CLK' event and CLK = '1' then
                 d_inputs(0) <= mux_out;
+                
                 for i in 1 to N-1 loop
                     d_inputs(i) <= shift_reg(i-1);
                 end loop;
@@ -115,10 +116,10 @@ architecture arch_tb_LFSR of tb_LFSR is
     end component;
 
 signal Seed_in, Seed_en, CLK : std_logic := '0';
-signal data_out : std_logic_vector(7 downto 0); -- 6 bit
+signal data_out : std_logic_vector(7 downto 0);
 
 begin 
-    inst_0 : LFSR port map(Clk, Seed_en, Seed_in, data_out);
+    LFSR_inst : LFSR port map(Clk, Seed_en, Seed_in, data_out);
 
     process is
     begin
@@ -129,19 +130,23 @@ begin
     process is
     begin
          Seed_en <= '1';
-         wait for 10ps;
-         
          Seed_in <= '1';
-         wait for 10 ps;
+         wait for 10ps;
          
          Seed_in <= '0';
          wait for 20 ps;
          
          Seed_in <= '1';
-         wait for 40 ps;
-
-         Seed_en <= '0';   
+         wait for 10 ps;
+         
          Seed_in <= '0';
-         wait for 400ps;  
+         wait for 10 ps;
+         
+         Seed_in <= '1';
+         wait for 30 ps;
+         
+         Seed_in <= '0';
+         Seed_en <= '0';   
+         wait for 200ps;  
      end process;
 end;
