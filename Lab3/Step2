@@ -45,7 +45,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity LFSR is
-    generic(N: integer := 8);
+    generic(N: natural);
     port(
         Clk         : in std_logic;
         seed_en     : in std_logic;
@@ -97,7 +97,7 @@ entity tb_LFSR is end;
 architecture arch_tb_LFSR of tb_LFSR is 
 
     component LFSR is
-    generic(N: integer := 8);
+    generic(N: natural);
     port(
         Clk         : in std_logic;
         seed_en     : in std_logic;
@@ -110,7 +110,7 @@ signal Seed_in, Seed_en, CLK : std_logic := '0';
 signal data_out : std_logic_vector(7 downto 0);
 
 begin 
-    LFSR_inst : LFSR port map(Clk, Seed_en, Seed_in, data_out);
+    LFSR_inst : LFSR generic map (8) port map(Clk, Seed_en, Seed_in, data_out);
 
     process is
     begin
