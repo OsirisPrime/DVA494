@@ -25,16 +25,16 @@ use ieee.std_logic_1164.all;
 entity DFF is
     port(   
         D   : in std_logic;
-        CLK : in std_logic;
+        Clk : in std_logic;
         Q   : out std_logic
         );
 end;
 
 architecture Arch_DFF of DFF is
 begin
-    process(CLK) is
+    process(Clk) is
     begin
-        if CLK' event and CLK = '1' then
+        if Clk' event and Clk = '1' then
             Q <= D;
         end if;
     end process;
@@ -82,7 +82,7 @@ begin
        DFF_first : DFF port map(mux_out, Clk, Shift_reg(N-1));
        
         gen_DFFs : for i in N-1 downto 1 generate
-            DFF_inst : DFF port map(CLK => Clk, D => Shift_reg(i), Q => shift_reg(i-1));
+            DFF_inst : DFF port map(Clk => Clk, D => Shift_reg(i), Q => shift_reg(i-1));
         end generate;
         
         data_out <= shift_reg;
