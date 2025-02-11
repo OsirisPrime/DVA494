@@ -4,16 +4,16 @@ use ieee.std_logic_1164.all;
 entity DFF is
     port(   
         D   : in std_logic;
-        CLK : in std_logic;
+        Clk : in std_logic;
         Q   : out std_logic
         );
 end;
 
 architecture Arch_DFF of DFF is
 begin
-    process(CLK) is
+    process(Clk) is
     begin
-        if CLK' event and CLK = '1' then
+        if Clk' event and Clk = '1' then
             Q <= D;
         end if;
     end process;
@@ -28,30 +28,30 @@ entity tb is end;
 architecture arch_tb_arch of tb is
     component DFF is
         port(
-            D    : in std_logic;
-            CLK  : in std_logic;
-            Q    : out std_logic
+            D   : in std_logic;
+            Clk : in std_logic;
+            Q   : out std_logic
             );
     end component;
-signal D, CLK, Q: std_logic;
+signal D, Clk, Q: std_logic;
 begin
-    DFF_inst : DFF port map(D, CLK, Q);
+    DFF_inst : DFF port map(D, Clk, Q);
 
     process is
     begin
         D <= '1';
-        CLK <= '1';
+        Clk <= '1';
         wait for 1 ps;
         
         D <= '0';
-        CLK <= '0';
+        Clk <= '0';
         wait for 1 ps;
         
         D <= '0';        
         CLK <= '1';
         wait for 1 ps;
         
-        CLK <= '0';
+        Clk <= '0';
         wait for 1 ps;
     end process;
 end;
