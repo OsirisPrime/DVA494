@@ -67,7 +67,7 @@ architecture LFSR_Arch of LFSR is
     component DFF is
         port(   
         D   : in std_logic;
-        CLK : in std_logic;
+        Clk : in std_logic;
         Q   : out std_logic
         );
     end component;
@@ -106,7 +106,7 @@ architecture arch_tb_LFSR of tb_LFSR is
         );
     end component;
 
-signal Seed_in, Seed_en, CLK : std_logic := '0';
+signal Seed_in, Seed_en, Clk : std_logic := '0';
 signal data_out : std_logic_vector(7 downto 0);
 
 begin 
@@ -114,7 +114,7 @@ begin
 
     process is
     begin
-         clk <= not clk;
+         Clk <= not Clk;
          wait for 5ps;
     end process;
          
