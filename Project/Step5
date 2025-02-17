@@ -423,6 +423,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity FaultyALUTester is
+    generic(Fault_probability : real);
     port( FAT_out : out integer);
 end;
 
@@ -483,7 +484,7 @@ begin
     B   <= LFSR_out(7 downto 4);
     Op  <= LFSR_out(10 downto 8);
     
-    FLG_inst : fault_location_generator generic map (0.2, 1) port map( clk => Clk, fault_location => Fault_Location);
+    FLG_inst : fault_location_generator generic map (Fault_probability, 1) port map( clk => Clk, fault_location => Fault_Location);
     
     FALU1_inst : FaultyALU port map(A => A, B => B, Operation => Op, FaultLocation => Fault_Location, Result => FALU1_out);
     
@@ -511,10 +512,11 @@ entity tb is end;
 
 architecture Arch_tb of tb is
     component FaultyALUTester is
+        generic(Fault_probability : real);
         port( FAT_out : out integer);
     end component;
     
     signal FAT_out : integer;
 begin
-    tester : FaultyALUTester port map (FAT_out);
+    tester : FaultyALUTester generic map (0.2) port map (FAT_out);
 end;
