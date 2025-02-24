@@ -37,7 +37,7 @@ begin
         -- Second activity
         btnC <= '1';    wait for 1ms;
         btnC <= '0';    wait for 1ms;
-        btnC <= '1';    wait for 15ms;
+        btnC <= '1';    wait for 20ms;
         btnC <= '0';    wait for 2ms;
         btnC <= '1';    wait for 1ms;
         btnC <= '0';    wait for 2ms;
