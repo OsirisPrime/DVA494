@@ -5,30 +5,29 @@ entity clock_divider is
     port(
          clk        : in std_logic;     
          reset_n    : in std_logic;      
-         clk_1hz     : out std_logic     
+         clk_1hz    : out std_logic     
          );
 end;
 
 architecture Arch_CD of clock_divider is
     signal counter : integer := 0;
+    signal clk_div : std_logic := '1';    
     constant MAX_COUNT : integer := 100_000_000; 
-    signal clk_div : std_logic := '0';
 begin
     process(clk)
     begin
         if rising_edge(clk) then
-            if reset_n = '1' then 
+            if reset_n = '1' then
                 counter <= 0;
-                clk_div <= '0';
-            elsif counter = (MAX_COUNT / 2) - 1 then
-                clk_div <= not clk_div;  
-                counter <= 0;
+                clk_div <= '1';
+            elsif counter >= (MAX_COUNT/2)-1 then
+                counter <= 0;                
+                clk_div <= not clk_div;
             else
                 counter <= counter + 1;
             end if;
         end if;
     end process;
-    
     clk_1hz <= clk_div;
 end;
 
@@ -54,20 +53,20 @@ architecture Arch_SC of seconds_counter is
         port(
              clk        : in std_logic;
              reset_n    : in std_logic;
-             clk_1hz     : out std_logic
+             clk_1hz    : out std_logic
              );
     end component;
     
 begin
     clock_divider_inst : clock_divider port map(clk => clk, reset_n => reset_n, clk_1hz => clk_1hz);
     
-    process(clk_1hz)
+    process(clk_1hz, reset_n)
     begin
-        if rising_edge(clk_1hz) then
-            if reset_n = '1' then  
+        if reset_n = '1' then
                 sec <= 0;
                 min <= 0;
-            elsif sec = 59 then
+        elsif rising_edge(clk_1hz) then 
+            if sec = 59 then
                 sec <= 0;
                 if min = 59 then
                     min <= 0;
@@ -79,7 +78,6 @@ begin
             end if;
         end if;
     end process;
-    
     ss <= sec;
     mm <= min;
 end;
@@ -93,7 +91,7 @@ entity tb is end;
 
 architecture Arch_tb of tb is
     signal clk : std_logic := '0';
-    signal reset_n : std_logic := '1'; 
+    signal reset_n : std_logic := '0'; 
     signal ss : integer range 0 to 59; 
     signal mm : integer range 0 to 59;
     
@@ -118,9 +116,10 @@ begin
     
     process
     begin
+        wait for 3 sec; 
         reset_n <= '1';  
-        wait for 10 ns;
-        reset_n <= '0'; 
-        wait for 60 sec; 
+        wait for 0.5 sec;        
+        reset_n <= '0';    
+        wait for 1 sec;     
     end process;
 end;
