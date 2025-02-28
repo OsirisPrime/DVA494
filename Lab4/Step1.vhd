@@ -1,153 +1,130 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity reset_generator is
-    generic(
-            Clk_freq    : integer := 100_000_000;
-            Delay_time  : integer := 10
-            );
+-- Generates a stable 1 Hz clock from a 100MHz clock
+entity clock_divider is
     port(
-         clk        : in std_logic;
-         reset_n    : out std_logic
+         clk        : in std_logic;     -- Input clock (100MHz)
+         reset_n    : in std_logic;     -- Reset signal       
+         clk_1hz    : out std_logic     -- Output clock (1HZ)
          );
 end;
 
-architecture Arch_RG of reset_generator is
-    signal temp : std_logic := '0';
+architecture Arch_CD of clock_divider is
+    signal counter : integer := 0;                  -- Counter of clock cycles
+    signal clk_div : std_logic := '1';              -- Internal divided clock
+    constant MAX_COUNT : integer := 100_000_000;    -- 100MHz to 1 Hz division
 begin
-    process(clk) is
-        variable count : integer range 0 to Clk_freq*Delay_time/1000;
+    process(clk)
     begin
-        if(clk'event and clk = '1') then
-            if(count < Clk_freq*Delay_time/1000) then 
-                count := count + 1;
+        if rising_edge(clk) then
+            if reset_n = '1' then
+                counter <= 0;
+                clk_div <= '1';
+            elsif counter >= (MAX_COUNT/2)-1 then
+                counter <= 0;                
+                clk_div <= not clk_div;     -- Toggle clock every half cycle
             else
-                count := 0;
-                temp <= '1';
+                counter <= counter + 1;
             end if;
         end if;
     end process;
-    reset_n <= temp;
+    clk_1hz <= clk_div;
 end;
 
 
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity btn_debouncer is
-    generic(
-            Clk_freq    : integer := 100_000_000;
-            Stable_time : integer := 10
-            );
+-- Counts seconds and minutes
+entity seconds_counter is
     port(
-        btnC    : in std_logic;
-        clk     : in std_logic;
-        reset_n : in std_logic;
-        result  : out std_logic
+         clk        : in std_logic;                 -- Clock input
+         reset_n    : in std_logic;                 -- Reset signal
+         ss         : out integer range 0 to 59;    -- Seconds output
+         mm         : out integer range 0 to 59     -- Minutes output
          );
 end;
 
-architecture Arch_BD of btn_debouncer is
-    signal flipflops    : std_logic_vector(1 downto 0);
-    signal counter_set  : std_logic;
-begin
-    counter_set <= flipflops(0) xor flipflops(1);
-    
-    process(clk, reset_n) is
-        variable count : integer range 0 to Clk_freq*Stable_time/1000;
-    begin
-        if(reset_n = '0') then 
-            flipflops(1 downto 0) <= "00";
-            result <= '0';
-        elsif (clk'event and clk = '1') then
-            flipflops(0) <= btnC;
-            flipflops(1) <= flipflops(0);
-            if(counter_set = '1') then
-                count := 0;
-            elsif(count < Clk_freq*Stable_time/1000) then 
-                count := count + 1;
-            else
-                result <= flipflops(1);
-            end if;
-        end if;
-    end process;
-end;
-
-
-library ieee;
-use ieee.std_logic_1164.all;
-
-entity toggle_process is
-    port(
-         result : in std_logic;
-         clk    : in std_logic;
-         led    : out std_logic_vector(15 downto 0)
-         );
-end;
-
-architecture Arch_TP of toggle_process is
-    signal prev_result, led_state : std_logic := '0';
-begin
-    process(clk) is
-    begin
-        if(clk'event and clk = '1') then 
-            if(result = '1') and (prev_result = '0') then
-                led_state <= not led_state;
-            end if;
-            prev_result <= result;
-        end if;
-    end process;
-    led <= (others => led_state);
-end;
-
-
-library ieee;
-use ieee.std_logic_1164.all;
-
-entity puch_led is
-    port(
-         clk    : in std_logic;
-         btnC   : in std_logic;
-         led    : out std_logic_vector(15 downto 0)
-         );
-end;
-
-architecture Arch_PL of puch_led is
-    component reset_generator is
-        generic(
-                Clk_freq    : integer := 100_000_000;
-                Delay_time  : integer := 10
-                );
+architecture Arch_SC of seconds_counter is
+    component clock_divider is
         port(
              clk        : in std_logic;
-             reset_n    : out std_logic
+             reset_n    : in std_logic;
+             clk_1hz    : out std_logic
              );
     end component;
     
-    component btn_debouncer is
-        generic(
-                Clk_freq    : integer := 100_000_000;
-                Stable_time : integer := 10
-                );
-        port(
-            btnC    : in std_logic;
-            clk     : in std_logic;
-            reset_n : in std_logic;
-            result  : out std_logic
-             );
-    end component;
-    
-    component toggle_process is
-    port(
-         result : in std_logic;
-         clk    : in std_logic;
-         led    : out std_logic_vector(15 downto 0)
-         );
-    end component;
-    
-    signal reset_n, result : std_logic;
+    signal clk_1hz : std_logic;
+    signal sec : integer range 0 to 59 := 0;    -- Seconds counter
+    signal min : integer range 0 to 59 := 0;    -- Minutes counter 
+       
 begin
-    reset_gen_inst : reset_generator port map(clk => clk, reset_n => reset_n);
-    debouncer_inst : btn_debouncer port map(btnC => btnC, clk => clk, reset_n => reset_n, result => result);
-    toggle_inst : toggle_process port map(result => result, clk => clk, led => led);
+    -- Generate a stable 1 Hz clock
+    clock_divider_inst : clock_divider port map(clk => clk, reset_n => reset_n, clk_1hz => clk_1hz);
+    
+    process(clk_1hz, reset_n)
+    begin
+        if reset_n = '1' then
+                sec <= 0;
+                min <= 0;
+        elsif rising_edge(clk_1hz) then 
+            if sec = 59 then
+                sec <= 0;
+                if min = 59 then
+                    min <= 0;
+                else
+                    min <= min + 1;
+                end if;
+            else
+                sec <= sec + 1;
+            end if;
+        end if;
+    end process;
+    ss <= sec;
+    mm <= min;
+end;
+
+
+-- ///////////////////////////////////////// tb /////////////////////////////////////////
+
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity tb is end;
+
+architecture Arch_tb of tb is
+    signal clk : std_logic := '0';
+    signal reset_n : std_logic := '0'; 
+    signal ss : integer range 0 to 59; 
+    signal mm : integer range 0 to 59;
+    
+    component seconds_counter is
+        port(
+             clk        : in std_logic;
+             reset_n    : in std_logic;
+             ss         : out integer range 0 to 59;
+             mm         : out integer range 0 to 59
+             );
+    end component; 
+begin
+    SC_inst : seconds_counter port map(clk => clk, reset_n => reset_n, ss => ss, mm => mm);
+    
+    process
+    begin
+        clk <= '0';
+        wait for 5 ns;
+        clk <= '1';
+        wait for 5 ns;
+    end process;
+    
+    process
+    begin
+        wait for 3 sec; 
+        reset_n <= '1';  
+        wait for 0.5 sec;        
+        reset_n <= '0';    
+        wait for 1 sec;     
+    end process;
 end;
