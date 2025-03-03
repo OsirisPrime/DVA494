@@ -195,13 +195,13 @@ architecture Arch_tb of tb is
              reset_n    : in std_logic;
              bcd        : in std_logic_vector(15 downto 0);
              an         : out std_logic_vector(3 downto 0);
-             sseg       : out std_logic_vector(6 downto 0)
+             sseg       : out std_logic_vector(7 downto 0)
              );
     end component;
     signal clk, reset_n : std_logic := '0';
     signal bcd : std_logic_vector(15 downto 0);
     signal an : std_logic_vector(3 downto 0);
-    signal sseg : std_logic_vector(6 downto 0);
+    signal sseg : std_logic_vector(7 downto 0);
 begin
     DD_inst : display_driver port map(clk => clk, reset_n => reset_n, bcd => bcd, an => an, sseg => sseg);
     
@@ -215,28 +215,28 @@ begin
     
     process is
     begin
-        bcd <= "0000000000000000";
-        wait for 20 ns;
+        bcd <= "0000000000001111";
+        wait for 10 ms;
         
-        bcd <= "0010001000100011";
-        wait for 20 ns;
+        bcd <= "0000000011110000";
+        wait for 10 ms;
         
-        bcd <= "0000100000000110";
-        wait for 20 ns;
+        bcd <= "0000111100000000";
+        wait for 10 ms;
         
-        bcd <= "0001000100001100";
-        wait for 20 ns;
+        bcd <= "1111000000000000";
+        wait for 10 ms;
         
         bcd <= "0010000100001000";
-        wait for 20 ns;
+        wait for 10 ms;
         
         bcd <= "0000011000010000";
-        wait for 20 ns;
+        wait for 10 ms;
         
         bcd <= "1100000000100000";
-        wait for 20 ns;
+        wait for 10 ms;
         
         bcd <= "1001000001000100";
-        wait for 20 ns;
+        wait for 10 ms;
     end process;
 end;
