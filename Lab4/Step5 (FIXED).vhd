@@ -42,7 +42,7 @@ architecture Arch_CD of clock_divider is
 begin
     process(clk)
     begin
-        if rising_edge(clk) then
+        if falling_edge(clk) then
             if reset_n = '1' then
                 counter <= 0;
                 clk_div <= '1';
