@@ -16,8 +16,8 @@ architecture Arch_CD of clock_divider is
     constant MAX_COUNT : integer := 100_000_000;    -- 100MHz to 1 Hz division
 begin
     process(clk)
-    begin
-        if rising_edge(clk) then
+    begin 
+        if falling_edge(clk) then
             if reset_n = '1' then
                 counter <= 0;
                 clk_div <= '1';
